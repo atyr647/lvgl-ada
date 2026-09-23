@@ -1,3 +1,5 @@
 /alire/
 lib/
 obj/
+obj-android/
+lib-android/
