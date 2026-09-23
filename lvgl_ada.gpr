@@ -41,8 +41,18 @@ project Lvgl_Ada is
       "lvgl/src/libs/vg_lite_driver/**",
       "lvgl/src/debugging/vg_lite_tvg/**");
 
-   for Object_Dir use "obj";
-   for Library_Dir use "lib";
+   --  Separate build folders per target, so a desktop build and an
+   --  Android cross build (-XLVGL_ADA_BUILD=android) never mix objects.
+   type Build_Type is ("native", "android");
+   Build : Build_Type := external ("LVGL_ADA_BUILD", "native");
+   case Build is
+      when "native" =>
+         for Object_Dir use "obj";
+         for Library_Dir use "lib";
+      when "android" =>
+         for Object_Dir use "obj-android";
+         for Library_Dir use "lib-android";
+   end case;
    for Library_Name use "lvgl_ada";
    for Create_Missing_Dirs use "True";
 
