@@ -4,7 +4,9 @@ project Lvgl_Ada is
    for Source_Dirs use ("src", "lvgl/src/**");
 
    --  Excluded: every vendored third-party codec/rendering library under
-   --  lvgl/src/libs (libpng, freetype, thorvg, vg_lite_driver, ...) and
+   --  lvgl/src/libs (libpng, freetype, thorvg, vg_lite_driver, ...) except
+   --  tjpgd (small JPEG decoder, for camera snapshots) and tiny_ttf's
+   --  headers (TrueType fonts at any size, for high-density phones), and
    --  the vg_lite debug shim. None are enabled in the committed
    --  lv_conf.h (this binding needs none of them), and two problems rule
    --  out just leaving them in Source_Dirs anyway: several GPU-series
@@ -15,7 +17,29 @@ project Lvgl_Ada is
    --  per-source-dir) C include path, breaking unrelated widgets that
    --  merely happen to be compiled after it.
    for Excluded_Source_Dirs use
-     ("lvgl/src/libs/**", "lvgl/src/debugging/vg_lite_tvg/**");
+     ("lvgl/src/libs/FT800-FT813/**",
+      "lvgl/src/libs/barcode/**",
+      "lvgl/src/libs/bin_decoder/**",
+      "lvgl/src/libs/bmp/**",
+      "lvgl/src/libs/ffmpeg/**",
+      "lvgl/src/libs/freetype/**",
+      "lvgl/src/libs/frogfs/**",
+      "lvgl/src/libs/fsdrv/**",
+      "lvgl/src/libs/gif/**",
+      "lvgl/src/libs/gltf/**",
+      "lvgl/src/libs/gstreamer/**",
+      "lvgl/src/libs/libjpeg_turbo/**",
+      "lvgl/src/libs/libpng/**",
+      "lvgl/src/libs/libwebp/**",
+      "lvgl/src/libs/lodepng/**",
+      "lvgl/src/libs/lz4/**",
+      "lvgl/src/libs/nanovg/**",
+      "lvgl/src/libs/qrcode/**",
+      "lvgl/src/libs/rle/**",
+      "lvgl/src/libs/rlottie/**",
+      "lvgl/src/libs/thorvg/**",
+      "lvgl/src/libs/vg_lite_driver/**",
+      "lvgl/src/debugging/vg_lite_tvg/**");
 
    for Object_Dir use "obj";
    for Library_Dir use "lib";
@@ -37,10 +61,13 @@ project Lvgl_Ada is
    --  other C dependency of a static Ada library.
 
    package Compiler is
+      --  SDL_INCLUDE_DIR: where SDL2/SDL.h lives -- the system's by
+      --  default, a cross-built SDL's for Android.
       for Switches ("C") use
         ("-DLV_CONF_INCLUDE_SIMPLE",
          "-I" & Lvgl_Ada'Project_Dir,
          "-I" & Lvgl_Ada'Project_Dir & "lvgl",
+         "-I" & external ("SDL_INCLUDE_DIR", "/usr/include"),
          "-O2", "-g");
       for Switches ("Ada") use ("-gnat2012", "-gnatwa", "-g");
    end Compiler;

@@ -17,6 +17,10 @@
 #ifndef LV_CONF_H
 #define LV_CONF_H
 
+/* 32-bit color (XRGB8888): smooth gradients and shadows, and camera
+ * frames can be shown without conversion. */
+#define LV_COLOR_DEPTH 32
+
 /* If you need to include anything here, do it inside the `__ASSEMBLY__` guard */
 #if 0 && defined(__ASSEMBLY__)
 #include "my_include.h"
@@ -34,7 +38,7 @@
  *  - LV_STDLIB_RTTHREAD
  *  - LV_STDLIB_CUSTOM: Custom (implemented externally)
  */
-#define LV_USE_STDLIB_MALLOC LV_STDLIB_BUILTIN
+#define LV_USE_STDLIB_MALLOC LV_STDLIB_CLIB
 
 /** String functions source
  *  Possible values:
@@ -43,7 +47,7 @@
  *  - LV_STDLIB_RTTHREAD: RT-Thread (rt_memcpy/rt_memset/rt_strlen/rt_strcpy)
  *  - LV_STDLIB_CUSTOM: Custom (implemented externally)
  */
-#define LV_USE_STDLIB_STRING LV_STDLIB_BUILTIN
+#define LV_USE_STDLIB_STRING LV_STDLIB_CLIB
 
 /** Sprintf functions source
  *  Possible values:
@@ -52,7 +56,7 @@
  *  - LV_STDLIB_RTTHREAD: RT-Thread (rt_vsnprintf)
  *  - LV_STDLIB_CUSTOM: Custom (implemented externally)
  */
-#define LV_USE_STDLIB_SPRINTF LV_STDLIB_BUILTIN
+#define LV_USE_STDLIB_SPRINTF LV_STDLIB_CLIB
 
 #if LV_USE_STDLIB_MALLOC == LV_STDLIB_BUILTIN
 /** Size of the pool `lv_malloc()` allocates from. Needs to be at least 2kB (2048). */
@@ -150,7 +154,7 @@
 #define LV_COLOR_MIX_ROUND_OFS 0
 
 /** Default display refresh, input device read and animation step period. */
-#define LV_DEF_REFR_PERIOD 33
+#define LV_DEF_REFR_PERIOD 16
 
 /** Used to initialize default sizes such as widget sizes and style paddings. */
 #define LV_DPI_DEF 130
@@ -921,7 +925,7 @@
 #define LV_USE_BMP 0
 
 /** Also decodes split JPEG, a custom format optimized for embedded systems. */
-#define LV_USE_TJPGD 0
+#define LV_USE_TJPGD 1
 
 /** High-performance decoder supporting the complete JPEG specifications. */
 #define LV_USE_LIBJPEG_TURBO 0
@@ -1013,25 +1017,25 @@
 #define LV_FONT_MONTSERRAT_14 1
 
 /** Montserrat 16 */
-#define LV_FONT_MONTSERRAT_16 0
+#define LV_FONT_MONTSERRAT_16 1
 
 /** Montserrat 18 */
 #define LV_FONT_MONTSERRAT_18 0
 
 /** Montserrat 20 */
-#define LV_FONT_MONTSERRAT_20 0
+#define LV_FONT_MONTSERRAT_20 1
 
 /** Montserrat 22 */
 #define LV_FONT_MONTSERRAT_22 0
 
 /** Montserrat 24 */
-#define LV_FONT_MONTSERRAT_24 0
+#define LV_FONT_MONTSERRAT_24 1
 
 /** Montserrat 26 */
 #define LV_FONT_MONTSERRAT_26 0
 
 /** Montserrat 28 */
-#define LV_FONT_MONTSERRAT_28 0
+#define LV_FONT_MONTSERRAT_28 1
 
 /** Montserrat 30 */
 #define LV_FONT_MONTSERRAT_30 0
@@ -1196,7 +1200,7 @@
 #endif /*LV_USE_FREETYPE*/
 
 /** Built-in TTF decoder */
-#define LV_USE_TINY_TTF 0
+#define LV_USE_TINY_TTF 1
 
 #if LV_USE_TINY_TTF
 /** Load TTF data from files */
