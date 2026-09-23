@@ -78,6 +78,9 @@ project Lvgl_Ada is
          "-I" & Lvgl_Ada'Project_Dir,
          "-I" & Lvgl_Ada'Project_Dir & "lvgl",
          "-I" & external ("SDL_INCLUDE_DIR", "/usr/include"),
+         --  One extra flag for cross builds, e.g. -include a compatibility
+         --  header (Android 8 lacks aligned_alloc).
+         external ("LVGL_EXTRA_CFLAG", "-DLVGL_ADA=1"),
          "-O2", "-g");
       for Switches ("Ada") use ("-gnat2012", "-gnatwa", "-g");
    end Compiler;
