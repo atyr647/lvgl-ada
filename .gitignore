@@ -1,4 +1,3 @@
 /alire/
-/lib/
-/obj/
-/config/
+lib/
+obj/

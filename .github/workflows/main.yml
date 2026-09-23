@@ -6,11 +6,11 @@ on:                    # Run the workflow for each of the following event:
     types: [created]   # - A release is created.
 
 jobs:
-  build_native:
-    strategy:
-      matrix:
-        os: [macos-latest, windows-latest, ubuntu-latest]
-    runs-on: ${{ matrix.os }}
+  build_and_test:
+    # LVGL v9.6.0 bound against a real, compiled library and exercised by
+    # tests/smoke_test.adb -- only ubuntu is validated so far (SDL2 dev
+    # packages via apt, SDL_VIDEODRIVER=dummy for a headless run).
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
         with:
@@ -20,15 +20,23 @@ jobs:
         with:
           toolchain: gnat_native gprbuild --disable-assistant
 
-      - run: cd checks/check_pix32 && alr build
-      - run: cd checks/check_pix16 && alr build
-      - run: cd checks/check_pix16_swap && alr build
-      - run: cd checks/check_pix8 && alr build
-      - run: cd checks/check_pix1 && alr build
+      - name: Install SDL2
+        run: sudo apt-get update && sudo apt-get install -y libsdl2-dev
+
+      - name: Build lvgl_ada
+        run: gprbuild -P lvgl_ada.gpr -j0
+
+      - name: Build tests
+        run: gprbuild -P tests/tests.gpr -j0
+
+      - name: Run layout_check
+        run: SDL_VIDEODRIVER=dummy tests/obj/layout_check
+
+      - name: Run smoke_test
+        run: SDL_VIDEODRIVER=dummy tests/obj/smoke_test
 
         # Produce an Alire release manifest
       - name: Make Release Manifest
-        if: (startsWith(matrix.os, 'ubuntu'))
         run: |
           # Set user GitHub login required for `alr publish`
           alr config --set --global user.github_login ${{github.repository_owner}}
@@ -39,7 +47,7 @@ jobs:
         # Save the path to the release manifest for the next step.
         # This is a little trick to get around the fact that the actions/upload-release-asset doesn't allow globing pattern.
       - name: Get Release Manifest PATH
-        if: (github.event_name == 'release' && startsWith(matrix.os, 'ubuntu'))
+        if: (github.event_name == 'release')
         shell: bash
         run: |
           export MANIFEST_PATHNAME=$(ls alire/releases/*.toml | head -n 1)
@@ -48,7 +56,7 @@ jobs:
 
         # If this worklow was triggered by a release event, upload the release manifest as a GitHub release asset.
       - name: Upload release manifest
-        if: (github.event_name == 'release' && startsWith(matrix.os, 'ubuntu'))
+        if: (github.event_name == 'release')
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

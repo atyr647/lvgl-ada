@@ -1,0 +1,21 @@
+with "../lvgl_ada.gpr";
+
+project Tests is
+
+   for Languages use ("Ada");
+   for Source_Dirs use (".");
+   for Object_Dir use "obj";
+   for Main use ("layout_check.adb", "smoke_test.adb");
+
+   package Compiler is
+      for Switches ("Ada") use ("-gnat2012", "-gnatwa", "-g");
+   end Compiler;
+
+   package Linker is
+      --  liblvgl_ada.a is static; its C dependencies (SDL2, libm) are
+      --  not carried automatically -- see lvgl_ada.gpr's note on
+      --  Library_Options not applying to a static library.
+      for Switches ("Ada") use ("-lSDL2", "-lm");
+   end Linker;
+
+end Tests;

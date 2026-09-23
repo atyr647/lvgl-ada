@@ -1,58 +1,48 @@
-with "config/lvgl_ada_config.gpr";
-
-project LVGL_Ada is
-
-   Extra_Source_Dirs := ();
-   case LVGL_Ada_Config.Pixel_Bit_Depth is
-      when "Pix_1bit"  =>
-         Extra_Source_Dirs := Extra_Source_Dirs & ("src/color_1");
-      when "Pix_8bit"  =>
-         Extra_Source_Dirs := Extra_Source_Dirs & ("src/color_8");
-      when "Pix_16bit" =>
-         case LVGL_Ada_Config.Color_16_SWAP is
-            when "True" =>
-               Extra_Source_Dirs := Extra_Source_Dirs & ("src/color_16_swap");
-            when others =>
-               Extra_Source_Dirs := Extra_Source_Dirs & ("src/color_16");
-         end case;
-      when "Pix_32bit" =>
-         Extra_Source_Dirs := Extra_Source_Dirs & ("src/color_32");
-   end case;
+project Lvgl_Ada is
 
    for Languages use ("Ada", "C");
-   for Source_Dirs use ("src",
-                        "config",
-                        "lvgl/lv_core",
-                        "lvgl/lv_draw",
-                        "lvgl/lv_fonts",
-                        "lvgl/lv_hal",
-                        "lvgl/lv_misc",
-                        "lvgl/lv_objx",
-                        "lvgl/lv_themes",
-                        "lvgl/")
-                        & Extra_Source_Dirs;
+   for Source_Dirs use ("src", "lvgl/src/**");
+
+   --  Excluded: every vendored third-party codec/rendering library under
+   --  lvgl/src/libs (libpng, freetype, thorvg, vg_lite_driver, ...) and
+   --  the vg_lite debug shim. None are enabled in the committed
+   --  lv_conf.h (this binding needs none of them), and two problems rule
+   --  out just leaving them in Source_Dirs anyway: several GPU-series
+   --  variants under vg_lite_driver ship same-named files GPR's flat
+   --  per-project source namespace can't host at once, and thorvg bundles
+   --  an MSVC-only stdint.h/inttypes.h shim (rapidjson/msinttypes) that
+   --  shadows the real ones once its directory is on GPR's (automatic,
+   --  per-source-dir) C include path, breaking unrelated widgets that
+   --  merely happen to be compiled after it.
+   for Excluded_Source_Dirs use
+     ("lvgl/src/libs/**", "lvgl/src/debugging/vg_lite_tvg/**");
 
    for Object_Dir use "obj";
    for Library_Dir use "lib";
-
    for Library_Name use "lvgl_ada";
-   for Library_Version use Project'Library_Name & ".so." & lvgl_ada_Config.Crate_Version;
-
-   type Library_Type_Type is ("relocatable", "static", "static-pic");
-   Library_Type : Library_Type_Type :=
-     external ("BB_PICO_BSP_LIBRARY_TYPE", external ("LIBRARY_TYPE", "static"));
-   for Library_Kind use Library_Type;
    for Create_Missing_Dirs use "True";
 
-   package Compiler is
-      for Switches ("Ada") use Lvgl_Ada_Config.Ada_Compiler_Switches;
+   type Library_Type_Type is ("static", "relocatable", "static-pic");
+   Library_Type : Library_Type_Type := external ("LIBRARY_TYPE", "static");
+   for Library_Kind use Library_Type;
 
-      case Lvgl_Ada_Config.Build_Profile is
-         when "development" =>
-            for Switches ("C") use ("-DLV_CONF_INCLUDE_SIMPLE", "-Og", "-g");
-         when others =>
-            for Switches ("C") use ("-DLV_CONF_INCLUDE_SIMPLE", "-O3", "-g");
-      end case;
+   --  LVGL's own SDL2 driver (Lv.Sdl) needs SDL2 at link time even for
+   --  programs that never call into it, since it is compiled into every
+   --  build of this static library (LV_USE_SDL is set in the committed
+   --  lv_conf.h, not per-program). A static library's .gpr cannot inject
+   --  linker flags into whatever links against it the way a relocatable
+   --  one can (gprbuild rejects Library_Options / package Linker here
+   --  for a static Library_Kind) -- programs that with this project must
+   --  add ("-lSDL2", "-lm") to their own package Linker, same as any
+   --  other C dependency of a static Ada library.
+
+   package Compiler is
+      for Switches ("C") use
+        ("-DLV_CONF_INCLUDE_SIMPLE",
+         "-I" & Lvgl_Ada'Project_Dir,
+         "-I" & Lvgl_Ada'Project_Dir & "lvgl",
+         "-O2", "-g");
+      for Switches ("Ada") use ("-gnat2012", "-gnatwa", "-g");
    end Compiler;
 
-end LVGL_Ada;
+end Lvgl_Ada;
