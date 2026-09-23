@@ -48,7 +48,7 @@ package Lv.Layout is
    procedure Invalidate (O : Lv.Obj.Object)
      with Import, Convention => C, External_Name => "lv_obj_invalidate";
    procedure Move_Foreground (O : Lv.Obj.Object)
-     with Import, Convention => C, External_Name => "lv_obj_move_foreground";
+     with Import, Convention => C, External_Name => "lvada_move_foreground";
    --  Extra touch area around a small control, in px.
    procedure Ext_Click_Area (O : Lv.Obj.Object; Size : Coord)
      with Import, Convention => C, External_Name => "lv_obj_set_ext_click_area";

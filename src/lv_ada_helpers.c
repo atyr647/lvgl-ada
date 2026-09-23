@@ -421,3 +421,5 @@ uint32_t lvada_part_items(void) { return LV_PART_ITEMS; }
 uint32_t lvada_part_scrollbar(void) { return LV_PART_SCROLLBAR; }
 uint32_t lvada_part_knob(void) { return LV_PART_KNOB; }
 uint32_t lvada_part_cursor(void) { return LV_PART_CURSOR; }
+
+void lvada_move_foreground(lv_obj_t *o) { lv_obj_move_foreground(o); }
