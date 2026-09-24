@@ -100,6 +100,8 @@ package Lv.Style is
      with Import, Convention => C, External_Name => "lvada_min_height";
    procedure Max_Width (O : Lv.Obj.Object; W : Coord; Sel : Selector := Main)
      with Import, Convention => C, External_Name => "lvada_max_width";
+   procedure Max_Height (O : Lv.Obj.Object; H : Coord; Sel : Selector := Main)
+     with Import, Convention => C, External_Name => "lvada_max_height";
 
    --  Animate property changes between states over Ms milliseconds.
    procedure Transition (O : Lv.Obj.Object; Ms : Interfaces.C.unsigned; Sel : Selector := Main)

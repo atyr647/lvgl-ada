@@ -143,6 +143,7 @@ void lvada_arc(lv_obj_t *o, int32_t w, uint32_t rgb, uint32_t opa, uint32_t sel)
 
 void lvada_min_height(lv_obj_t *o, int32_t h, uint32_t sel) { lv_obj_set_style_min_height(o, h, sel); }
 void lvada_max_width(lv_obj_t *o, int32_t w, uint32_t sel)  { lv_obj_set_style_max_width(o, w, sel); }
+void lvada_max_height(lv_obj_t *o, int32_t h, uint32_t sel) { lv_obj_set_style_max_height(o, h, sel); }
 
 /* A short fade on state changes (e.g. pressed) for a softer feel. */
 void lvada_transition_ms(lv_obj_t *o, uint32_t ms, uint32_t sel)
