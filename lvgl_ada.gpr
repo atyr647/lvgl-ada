@@ -42,8 +42,10 @@ project Lvgl_Ada is
       "lvgl/src/debugging/vg_lite_tvg/**");
 
    --  LVGL's SDL renderer backend is built from src/lv_sdl_sw_ada.c, a copy
-   --  that uploads only what changed of each frame (see its header).
-   for Excluded_Source_Files use ("lv_sdl_sw.c");
+   --  that uploads only what changed of each frame, and its SDL keyboard
+   --  from src/lv_sdl_keyboard_ada.c, which has room for a paste (see their
+   --  headers).
+   for Excluded_Source_Files use ("lv_sdl_sw.c", "lv_sdl_keyboard.c");
 
    --  Separate build folders per target, so a desktop build and an
    --  Android cross build (-XLVGL_ADA_BUILD=android) never mix objects.
