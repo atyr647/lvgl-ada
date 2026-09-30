@@ -5,7 +5,7 @@ project Lvgl_Ada is
 
    --  Excluded: every vendored third-party codec/rendering library under
    --  lvgl/src/libs (libpng, freetype, thorvg, vg_lite_driver, ...) except
-   --  tjpgd (small JPEG decoder, for camera snapshots) and tiny_ttf's
+   --  tjpgd and lodepng (small JPEG and PNG decoders, for pictures) and tiny_ttf's
    --  headers (TrueType fonts at any size, for high-density phones), and
    --  the vg_lite debug shim. None are enabled in the committed
    --  lv_conf.h (this binding needs none of them), and two problems rule
@@ -31,7 +31,6 @@ project Lvgl_Ada is
       "lvgl/src/libs/libjpeg_turbo/**",
       "lvgl/src/libs/libpng/**",
       "lvgl/src/libs/libwebp/**",
-      "lvgl/src/libs/lodepng/**",
       "lvgl/src/libs/lz4/**",
       "lvgl/src/libs/nanovg/**",
       "lvgl/src/libs/qrcode/**",
