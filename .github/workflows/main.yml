@@ -23,11 +23,12 @@ jobs:
       - name: Install SDL2
         run: sudo apt-get update && sudo apt-get install -y libsdl2-dev
 
+      # Alire's toolchain isn't on PATH: its gprbuild runs through alr exec.
       - name: Build lvgl_ada
-        run: gprbuild -P lvgl_ada.gpr -j0
+        run: alr -n exec -- gprbuild -P lvgl_ada.gpr -j0
 
       - name: Build tests
-        run: gprbuild -P tests/tests.gpr -j0
+        run: alr -n exec -- gprbuild -P tests/tests.gpr -j0
 
       - name: Run layout_check
         run: SDL_VIDEODRIVER=dummy tests/obj/layout_check
@@ -35,8 +36,10 @@ jobs:
       - name: Run smoke_test
         run: SDL_VIDEODRIVER=dummy tests/obj/smoke_test
 
-        # Produce an Alire release manifest
+        # Produce an Alire release manifest (for a release only: alr publish
+        # asks before it goes on, and a push has no one to answer).
       - name: Make Release Manifest
+        if: (github.event_name == 'release')
         run: |
           # Set user GitHub login required for `alr publish`
           alr config --set --global user.github_login ${{github.repository_owner}}
