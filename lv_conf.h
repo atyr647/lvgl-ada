@@ -916,7 +916,7 @@
 #define LV_BIN_DECODER_RAM_LOAD 0
 
 /** PNG decoder (LodePNG) */
-#define LV_USE_LODEPNG 0
+#define LV_USE_LODEPNG 1
 
 /** PNG decoder (libpng) */
 #define LV_USE_LIBPNG 0
