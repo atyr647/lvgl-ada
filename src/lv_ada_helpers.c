@@ -347,7 +347,7 @@ static size_t jpeg_in(JDEC *jd, uint8_t *buf, size_t n)
 static int jpeg_out(JDEC *jd, void *bitmap, JRECT *r)
 {
     struct jsrc *s = jd->device;
-    const uint8_t *px = bitmap;   /* RGB888 (JD_FORMAT 0) */
+    const uint8_t *px = bitmap;   /* LVGL's tjpgd, JD_FORMAT 0: three bytes a pixel, B first */
     int k = s->shrink;
     int32_t ow = (int32_t)s->out->header.w, oh = (int32_t)s->out->header.h;
     uint8_t *dst = (uint8_t *)s->out->data;
@@ -359,9 +359,9 @@ static int jpeg_out(JDEC *jd, void *bitmap, JRECT *r)
             if (ox >= ow || oy >= oh)
                 continue;
             uint8_t *p = dst + ((size_t)oy * ow + ox) * 4;
-            p[0] = px[2];   /* B */
+            p[0] = px[0];   /* B */
             p[1] = px[1];   /* G */
-            p[2] = px[0];   /* R */
+            p[2] = px[2];   /* R */
             p[3] = 0xFF;
         }
     }
