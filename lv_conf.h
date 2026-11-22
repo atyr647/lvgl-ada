@@ -960,8 +960,9 @@
  */
 #define LV_TXT_ENC LV_TXT_ENC_UTF8
 
-/** Characters to break (wrap) text on */
-#define LV_TXT_BREAK_CHARS " ,.;:-_)]}"
+/** Characters to break (wrap) text on: at spaces and hyphens only (Septua: after a full stop
+ *  or a colon too broke "a.m." and "starbucks.com" across lines) */
+#define LV_TXT_BREAK_CHARS " -"
 
 /** If a word is at least this long, will break wherever 'prettiest'.
  *  To disable, set to a value <= 0.
